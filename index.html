@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weight Price Calculator: Pao, Kg, Seer, Chhatank | ترازو کیلکولیٹر</title>
+<meta name="description" content="Free shop calculator. Weight to price, price to weight, dozen and change in Pakistani units: gram, pao, aadha kg, 3 pao, seer, chhatank, tola. English and Urdu. وزن سے قیمت نکالیں۔">
+<meta name="theme-color" content="#b64f00">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Weight Price Calculator: Pao, Kg, Seer, Chhatank | ترازو کیلکولیٹر">
+<meta property="og:description" content="Free shop calculator. Weight to price, price to weight, dozen and change in Pakistani units: gram, pao, aadha kg, 3 pao, seer, chhatank, tola. English and Urdu. وزن سے قیمت نکالیں۔">
+<style>body{margin:0}img{max-width:100%}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap">
+<style>
+/* Layout: counter tool. Language switch, four modes as a scrolling chip row, big inputs with quick-weight buttons, one dark "scale display" result card, running bill at the bottom. */
+:root{
+  --bg:#f1f3f6; --surface:#ffffff; --ink:#1b2128; --muted:#5d6877; --line:#d9dfe7;
+  --accent:#b64f00; --accent-ink:#ffffff; --tint:#fdeedd;
+  --res:#1f2328; --res-ink:#ffd23f; --res-sub:#b9c0cb; --bad:#b3261e;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Hanken Grotesk','Segoe UI',system-ui,sans-serif;
+  --urdu:'Noto Naskh Arabic','Segoe UI',serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111418; --surface:#1a1f25; --ink:#eef1f5; --muted:#9aa5b4; --line:#2b333d;
+    --accent:#ffa94d; --accent-ink:#111418; --tint:#3a2a17;
+    --res:#0a0c0f; --res-ink:#ffd23f; --res-sub:#9aa5b4; --bad:#ff8a80;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111418; --surface:#1a1f25; --ink:#eef1f5; --muted:#9aa5b4; --line:#2b333d;
+  --accent:#ffa94d; --accent-ink:#111418; --tint:#3a2a17;
+  --res:#0a0c0f; --res-ink:#ffd23f; --res-sub:#9aa5b4; --bad:#ff8a80;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:500 16px/1.45 var(--body);-webkit-text-size-adjust:100%}
+input,select,button{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:560px;margin:0 auto;padding-block:18px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.wrap.ur{font-family:var(--urdu);line-height:1.8}
+.wrap.ur h1,.wrap.ur h2,.wrap.ur .btn,.wrap.ur .chip,.wrap.ur label{font-family:var(--urdu)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{margin:0;font:800 34px/1.05 var(--display);letter-spacing:-.02em}
+.sub{margin:6px 0 0;color:var(--muted);font-size:15px;max-width:42ch}
+.lang{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;flex:none}
+.lang button{border:0;background:transparent;padding:6px 14px;min-height:40px;font-weight:700;font-size:14px}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.chip{flex:none;min-height:42px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;font-size:14.5px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tabs .chip{min-height:46px;font-size:15px}
+.card{background:var(--surface);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px;border:1.5px solid var(--line)}
+h2{margin:0;font:800 17px/1.2 var(--display)}
+label,.lbl{display:block;font-weight:700;font-size:13px;color:var(--muted);margin-bottom:4px}
+.fld{width:100%;min-height:52px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);font-size:20px;font-weight:700}
+select.fld{font-size:16px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.wq{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.wq .chip{width:100%;padding-inline:6px;text-align:center}
+.res{background:var(--res);color:var(--res-ink);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.res small{color:var(--res-sub);font-weight:700;font-size:13px}
+.res .big{font:800 46px/1.05 var(--display);letter-spacing:-.02em;overflow-wrap:anywhere}
+.res .ex{color:var(--res-sub);font-size:14px}
+.eq{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 16px}
+.eq div{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12);color:#e9edf2}
+.eq dt{color:var(--res-sub)}
+.eq dd{margin:0;font-weight:700}
+.btn{min-height:48px;padding:8px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:var(--ink)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.sm{min-height:38px;padding:4px 12px;font-size:14px}
+.btn.warn{color:var(--bad);border-color:var(--bad)}
+.hint{margin:0;font-size:14px;color:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;font-size:14px;padding:6px 8px}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--tint);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.ln{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.ln .t{min-width:0;overflow-wrap:anywhere}
+.ln .a{font:800 16px var(--display)}
+.ln button{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);font:800 18px var(--display)}
+.tot{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.tot strong{font:800 30px var(--display)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.notes{display:flex;flex-direction:column}
+.notes div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12);color:#e9edf2}
+.warnbox{padding:12px 14px;border-radius:12px;background:var(--tint);font-size:14px}
+.rowh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.saverow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.mi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);overflow-wrap:anywhere}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app" dir="ltr" lang="en">
+  <header class="top">
+    <div>
+      <h1 data-i="title"></h1>
+      <p class="sub" data-i="sub"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language / زبان">
+      <button type="button" data-act="lang" data-lang="en" id="bEn" aria-pressed="true">English</button>
+      <button type="button" data-act="lang" data-lang="ur" id="bUr" aria-pressed="false">اردو</button>
+    </div>
+  </header>
+
+  <div class="chips tabs" id="tabs" role="group" aria-label="Mode"></div>
+
+  <section class="card" id="itemsCard">
+    <div class="rowh"><h2 data-i="secItems"></h2><button class="btn sm" type="button" data-act="manage" id="bManage"></button></div>
+    <div class="chips" id="itemChips"></div>
+    <div id="manageBox" hidden></div>
+    <div class="saverow"><input class="fld" id="itemName" data-ph="itemPh" maxlength="30" style="min-height:46px;font-size:16px"><button class="btn pri sm" type="button" data-act="saveItem" data-i="saveItem"></button></div>
+  </section>
+
+  <section class="card" id="rateCard">
+    <h2 data-i="secRate"></h2>
+    <div class="two">
+      <div><label for="rate" data-i="lblRate"></label><input class="fld num" id="rate" type="number" inputmode="decimal" min="0" step="any" value="320" dir="ltr"></div>
+      <div><label for="rateUnit" data-i="lblPer"></label><select class="fld" id="rateUnit"></select></div>
+    </div>
+  </section>
+
+  <!-- Weight to price -->
+  <section class="card" id="pW">
+    <h2 data-i="secWeight"></h2>
+    <div class="wq" id="chipsW"></div>
+    <div class="two">
+      <div><label for="wVal" data-i="lblType"></label><input class="fld num" id="wVal" type="number" inputmode="decimal" min="0" step="any" value="750" dir="ltr"></div>
+      <div><label for="wUnit" data-i="lblUnit"></label><select class="fld" id="wUnit"></select></div>
+    </div>
+  </section>
+
+  <!-- Price to weight -->
+  <section class="card" id="pQ" hidden>
+    <h2 data-i="secAmount"></h2>
+    <div class="wq" id="chipsQ"></div>
+    <div><label for="amt" data-i="lblAmt"></label><input class="fld num" id="amt" type="number" inputmode="decimal" min="0" step="any" value="200" dir="ltr"></div>
+  </section>
+
+  <!-- Dozen -->
+  <section class="card" id="pD" hidden>
+    <h2 data-i="secDozen"></h2>
+    <div class="wq" id="chipsD"></div>
+    <div class="two">
+      <div><label for="dRate" data-i="lblDRate"></label><input class="fld num" id="dRate" type="number" inputmode="decimal" min="0" step="any" value="360" dir="ltr"></div>
+      <div><label for="dPcs" data-i="lblPcs"></label><input class="fld num" id="dPcs" type="number" inputmode="numeric" min="0" step="1" value="6" dir="ltr"></div>
+    </div>
+  </section>
+
+  <!-- Change -->
+  <section class="card" id="pC" hidden>
+    <h2 data-i="secChange"></h2>
+    <div class="two">
+      <div><label for="cBill" data-i="lblBill"></label><input class="fld num" id="cBill" type="number" inputmode="decimal" min="0" step="any" value="1280" dir="ltr"></div>
+      <div><label for="cGiven" data-i="lblGiven"></label><input class="fld num" id="cGiven" type="number" inputmode="decimal" min="0" step="any" value="5000" dir="ltr"></div>
+    </div>
+    <div class="wq" id="chipsC"></div>
+    <button class="btn sm" type="button" data-act="useBill" data-i="useBill" style="align-self:flex-start"></button>
+  </section>
+
+  <section class="res" id="out" aria-live="polite"></section>
+
+  <section class="card" id="optCard">
+    <h2 data-i="secOpt"></h2>
+    <div>
+      <span class="lbl" data-i="lblRound"></span>
+      <div class="chips" id="roundChips"></div>
+    </div>
+    <div>
+      <span class="lbl" data-i="lblSeer"></span>
+      <div class="seg" id="seerSeg"></div>
+      <p class="hint" data-i="seerNote" style="margin-top:8px"></p>
+    </div>
+  </section>
+
+  <section class="card" id="billCard">
+    <h2 data-i="secBill"></h2>
+    <div id="lines"></div>
+    <div class="two">
+      <div><label for="disc" data-i="lblDisc"></label><input class="fld num" id="disc" type="number" inputmode="decimal" min="0" step="any" placeholder="0" dir="ltr" style="min-height:46px;font-size:16px"></div>
+      <div><label for="shop" data-i="lblShop"></label><input class="fld" id="shop" maxlength="40" style="min-height:46px;font-size:16px"></div>
+    </div>
+    <div class="tot"><span data-i="total"></span><strong class="num" id="billTotal"></strong></div>
+    <div class="acts">
+      <a class="btn" id="wa" target="_blank" rel="noopener" href="#" data-i="share"></a>
+      <button class="btn warn" type="button" data-act="clearBill" data-i="clear" id="clr"></button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+var lang='en',tab='w',roundTo='1',seerMode='old',armed=false,armT,items=[],shop='',lines=[],curItem='',manage=false;
+try{var sv=JSON.parse(localStorage.getItem('taraazu-v1')||'{}');if(sv.lang==='ur')lang='ur';if(sv.round)roundTo=sv.round;if(sv.seer)seerMode=sv.seer;if(Array.isArray(sv.items))items=sv.items.filter(validItem);if(sv.shop)shop=String(sv.shop).slice(0,40);if(Array.isArray(sv.lines))lines=sv.lines.filter(function(l){return l&&typeof l.amt==='number';});}catch(e){}
+function validItem(i){return i&&typeof i.name==='string'&&i.name&&typeof i.rate==='number'&&(i.kind==='w'||i.kind==='d');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function save(){try{localStorage.setItem('taraazu-v1',JSON.stringify({lang:lang,round:roundTo,seer:seerMode,items:items,shop:shop,lines:lines}));}catch(e){}}
+function $(s){return document.querySelector(s);}
+function L(en,ur){return lang==='ur'?ur:en;}
+function num(v){var n=parseFloat(v);return isNaN(n)||n<0?0:n;}
+function fmt(n,d){if(!isFinite(n))return '-';return Number(n).toLocaleString('en-US',{maximumFractionDigits:d==null?3:d});}
+function rs(n){return 'Rs '+Math.round(n).toLocaleString('en-US');}
+function seerG(){return seerMode==='old'?933.1:1000;}
+function chhG(){return seerG()/16;}
+var TOLA=11.664;
+function unitG(u){return {g:1,kg:1000,pao:250,seer:seerG(),chh:chhG(),tola:TOLA,'100g':100}[u];}
+var UN={
+  g:['g','گرام'],kg:['kg','کلو'],pao:['pao','پاؤ'],seer:['seer','سیر'],chh:['chhatank','چھٹانک'],tola:['tola','تولہ'],'100g':['100 g','100 گرام']
+};
+function un(u){return UN[u][lang==='ur'?1:0];}
+var T={
+  title:['Taraazu Calculator','ترازو کیلکولیٹر'],
+  sub:['Weight to price, price to weight, dozen and change. Made for the shop counter.','وزن سے قیمت، قیمت سے وزن، درجن اور باقی پیسے۔ دکان کے کاؤنٹر کے لیے۔'],
+  secRate:['Rate','ریٹ'],lblRate:['Rate (Rs)','ریٹ (روپے)'],lblPer:['Per','فی'],
+  secWeight:['Weight','وزن'],lblType:['Or type the weight','یا وزن لکھیں'],lblUnit:['Unit','اکائی'],
+  secAmount:['Amount','رقم'],lblAmt:['Amount (Rs)','رقم (روپے)'],
+  secDozen:['Dozen items (eggs, bananas...)','درجن والی چیزیں (انڈے، کیلے...)'],lblDRate:['Rate per dozen (Rs)','ایک درجن کا ریٹ (روپے)'],lblPcs:['How many pieces','کتنے عدد'],
+  secChange:['Change','باقی پیسے'],lblBill:['Bill (Rs)','بل (روپے)'],lblGiven:['Customer gave (Rs)','گاہک نے دیے (روپے)'],useBill:['Use bill total','بل کا ٹوٹل لیں'],
+  secOpt:['Settings','ترتیبات'],lblRound:['Round the price to','قیمت راؤنڈ کریں'],lblSeer:['Weight of 1 seer','ایک سیر کا وزن'],
+  seerNote:['Old seer is 933 g. Many shops use 1 seer = 1 kg. Pick what your shop uses. Pao is always 250 g and tola 11.66 g.','پرانا سیر 933 گرام کا ہوتا ہے۔ کئی دکانیں 1 سیر = 1 کلو لگاتی ہیں۔ جو آپ کی دکان میں چلتا ہے وہ چنیں۔ پاؤ ہمیشہ 250 گرام اور تولہ 11.66 گرام ہے۔'],
+  secBill:['My bill','میرا بل'],total:['Total','ٹوٹل'],share:['Send on WhatsApp','واٹس ایپ پر بھیجیں'],clear:['Clear bill','بل صاف کریں'],
+  clearSure:['Sure? Tap again','پکّا؟ دوبارہ دبائیں'],
+  secItems:['My items','میری چیزیں'],manage:['Edit list','فہرست ٹھیک کریں'],done:['Done','ہو گیا'],saveItem:['Save as item','چیز محفوظ کریں'],
+  itemPh:['Item name (e.g. Sugar)','چیز کا نام (جیسے چینی)'],
+  noItems:['Type a name below and tap "Save as item" to keep the current rate. Next time, one tap fills the rate.','نیچے نام لکھ کر "چیز محفوظ کریں" دبائیں۔ اگلی بار ایک ٹیپ سے ریٹ لگ جائے گا۔'],
+  lblDisc:['Discount (Rs)','چھوٹ (روپے)'],lblShop:['Shop name (for the message)','دکان کا نام (پیغام کے لیے)']
+};
+var TABS=[['w',['Weight → Price','وزن سے قیمت']],['q',['Price → Weight','قیمت سے وزن']],['d',['Dozen','درجن']],['c',['Change','باقی پیسے']]];
+var WCH=[
+  [50,'50 g','50 گرام'],[100,'100 g','100 گرام'],[125,'½ pao','آدھا پاؤ'],[250,'1 pao','ایک پاؤ'],[500,'½ kg','آدھا کلو'],[625,'2½ pao','ڈھائی پاؤ'],[750,'3 pao','تین پاؤ'],
+  [1000,'1 kg','ایک کلو'],[1250,'1¼ kg','سوا کلو'],[1500,'1½ kg','ڈیڑھ کلو'],[2000,'2 kg','دو کلو'],[2500,'2½ kg','ڈھائی کلو'],[5000,'5 kg','پانچ کلو'],
+  ['chh','1 chhatank','ایک چھٹانک'],['seer','1 seer','ایک سیر'],['tola','1 tola','ایک تولہ']
+];
+var QCH=[50,100,200,500,1000,2000];
+var DCH=[[1,'1','1'],[2,'2','2'],[3,'3','3'],[4,'4','4'],[6,'½ dozen','آدھا درجن'],[12,'1 dozen','ایک درجن'],[18,'1½ dozen','ڈیڑھ درجن'],[24,'2 dozen','دو درجن']];
+var CCH=[100,500,1000,5000];
+var DEN=[5000,1000,500,100,50,20,10,5,2,1];
+
+function chipG(c){var v=c[0];if(v==='chh')return chhG();if(v==='seer')return seerG();if(v==='tola')return TOLA;return v;}
+function roundP(x){if(roundTo==='exact')return x;var s=parseFloat(roundTo);return Math.round(x/s)*s;}
+function gramsNow(){return num($('#wVal').value)*unitG($('#wUnit').value);}
+function perG(){return unitG($('#rateUnit').value);}
+function eqRows(g){
+  return [['g',g],['kg',g/1000],['pao',g/250],['seer',g/seerG()],['chh',g/chhG()],['tola',g/TOLA]].map(function(r){return '<div><dt>'+un(r[0])+'</dt><dd class="num">'+fmt(r[1],3)+'</dd></div>';}).join('');
+}
+function wlabel(g){
+  if(g>=1000)return fmt(g/1000,3)+' '+un('kg');
+  return fmt(g,1)+' '+un('g');
+}
+function hdr(){return curItem?' · '+esc(curItem):'';}
+function friendly(g){
+  var gg=Math.round(g/125)*125;
+  if(g<125||Math.abs(g-gg)>0.5)return '';
+  var k=Math.floor(gg/1000),r=gg-k*1000,ur=lang==='ur';
+  if(k===1&&r===250)return ur?'سوا کلو':'sawa kilo (1¼ kg)';
+  if(k===1&&r===500)return ur?'ڈیڑھ کلو':'dedh kilo (1½ kg)';
+  if(k===2&&r===500)return ur?'ڈھائی کلو':'dhai kilo (2½ kg)';
+  var remEn={125:'½ pao',250:'1 pao',375:'1½ pao',500:'½ kg',625:'2½ pao',750:'3 pao',875:'3½ pao'};
+  var remUr={125:'آدھا پاؤ',250:'ایک پاؤ',375:'ڈیڑھ پاؤ',500:'آدھا کلو',625:'ڈھائی پاؤ',750:'تین پاؤ',875:'ساڑھے تین پاؤ'};
+  var kUr={1:'ایک کلو',2:'دو کلو',3:'تین کلو',4:'چار کلو',5:'پانچ کلو'};
+  if(k===0)return ur?remUr[r]:remEn[r];
+  if(r===0)return ur?(kUr[k]||k+' کلو'):k+' kg';
+  if(r===500)return ur?k+'½ کلو':k+'½ kg';
+  return ur?(kUr[k]||k+' کلو')+' '+remUr[r]:k+' kg + '+remEn[r];
+}
+function fr(g){var f=friendly(g);return f?'<div class="ex">'+L('Also said as: ','یوں بھی کہتے ہیں: ')+f+'</div>':'';}
+function billSub(){return lines.reduce(function(s,l){return s+l.amt;},0);}
+function billDisc(){return Math.min(num($('#disc').value),billSub());}
+function billTotalNow(){return billSub()-billDisc();}
+function kindNow(){return tab==='d'?'d':'w';}
+function renderItems(){
+  var k=kindNow(),h='';
+  items.forEach(function(it,idx){
+    if(it.kind!==k)return;
+    h+='<button class="chip" type="button" data-act="pickItem" data-idx="'+idx+'" aria-pressed="'+(curItem===it.name)+'">'+esc(it.name)+' · Rs '+fmt(it.rate,2)+'/'+(it.kind==='d'?L('dozen','درجن'):un(it.unit))+'</button>';
+  });
+  $('#itemChips').innerHTML=h||'<p class="hint">'+T.noItems[lang==='ur'?1:0]+'</p>';
+  var mb=$('#manageBox');mb.hidden=!manage||!items.length;
+  mb.innerHTML=items.map(function(it,idx){return '<div class="mi"><span>'+esc(it.name)+' · Rs '+fmt(it.rate,2)+'/'+(it.kind==='d'?L('dozen','درجن'):un(it.unit))+'</span><button class="btn sm warn" type="button" data-act="delItem" data-idx="'+idx+'" aria-label="'+L('Delete','ہٹائیں')+'">×</button></div>';}).join('');
+  $('#bManage').textContent=manage?T.done[lang==='ur'?1:0]:T.manage[lang==='ur'?1:0];
+  $('#bManage').hidden=!items.length;
+}
+function update(){
+  var o=$('#out'),h='';
+  $('#rateCard').hidden=(tab==='d'||tab==='c');
+  $('#optCard').hidden=(tab==='c');
+  $('#itemsCard').hidden=(tab==='c');
+  if(tab==='w'){
+    var g=gramsNow(),rate=num($('#rate').value),exact=rate*g/perG(),p=roundP(exact);
+    h='<small>'+L('Price','قیمت')+hdr()+'</small><div class="big num">'+rs(p)+'</div>'+fr(g)+
+      (roundTo!=='exact'&&Math.abs(exact-p)>0.004?'<div class="ex num">'+L('Exact: Rs ','اصل: Rs ')+fmt(exact,2)+'</div>':'')+
+      '<small style="margin-top:6px">'+L('The same weight is','اتنا وزن برابر ہے')+'</small><dl class="eq">'+eqRows(g)+'</dl>'+
+      '<button class="btn pri" type="button" data-act="addW" style="margin-top:8px">'+L('Add to bill','بل میں جوڑیں')+'</button>';
+  }else if(tab==='q'){
+    var amt=num($('#amt').value),rt=num($('#rate').value),gg=rt>0?amt/rt*perG():0;
+    h='<small>'+L('You get','اتنا مال ملے گا')+hdr()+'</small><div class="big num">'+(rt>0?wlabel(gg):'-')+'</div>'+(rt>0?fr(gg):'')+
+      '<small style="margin-top:6px">'+L('The same weight is','اتنا وزن برابر ہے')+'</small><dl class="eq">'+eqRows(gg)+'</dl>'+
+      (rt>0&&gg>0?'<button class="btn pri" type="button" data-act="addQ" style="margin-top:8px">'+L('Add to bill','بل میں جوڑیں')+'</button>':'');
+  }else if(tab==='d'){
+    var dr=num($('#dRate').value),pc=Math.floor(num($('#dPcs').value)),dp=dr/12*pc,dpr=roundP(dp);
+    h='<small>'+L('Price','قیمت')+hdr()+'</small><div class="big num">'+rs(dpr)+'</div>'+
+      '<div class="ex num">'+pc+' '+L('pieces','عدد')+' = '+fmt(pc/12,2)+' '+L('dozen','درجن')+' · '+L('1 piece = Rs ','1 عدد = Rs ')+fmt(dr/12,2)+'</div>'+
+      (roundTo!=='exact'&&Math.abs(dp-dpr)>0.004?'<div class="ex num">'+L('Exact: Rs ','اصل: Rs ')+fmt(dp,2)+'</div>':'')+
+      (pc>0?'<button class="btn pri" type="button" data-act="addD" style="margin-top:8px">'+L('Add to bill','بل میں جوڑیں')+'</button>':'');
+  }else{
+    var bill=num($('#cBill').value),given=num($('#cGiven').value),diff=Math.round(given-bill);
+    if(diff<0){h='<small>'+L('Still to pay','ابھی دینے ہیں')+'</small><div class="big num">'+rs(-diff)+'</div>';}
+    else{
+      var left=diff,rows='';
+      DEN.forEach(function(d){var n=Math.floor(left/d);if(n>0){rows+='<div><span>'+(d>=10?L('Note','نوٹ'):L('Coin','سکہ'))+' '+d+'</span><b class="num">× '+n+'</b></div>';left-=n*d;}});
+      h='<small>'+L('Give back','واپس دیں')+'</small><div class="big num">'+rs(diff)+'</div>'+(diff>0?'<small style="margin-top:6px">'+L('Give it as','ایسے دیں')+'</small><div class="notes">'+rows+'</div>':'');
+    }
+  }
+  o.innerHTML=h;
+  renderBill();
+}
+function lineLabel(l){
+  var nm=l.name?l.name+': ':'';
+  if(l.t==='d')return nm+l.pcs+' '+L('pieces','عدد')+' × Rs '+fmt(l.rate,2)+'/'+L('dozen','درجن');
+  return nm+wlabel(l.g)+' × Rs '+fmt(l.rate,2)+'/'+un(l.unit);
+}
+function renderBill(){
+  var sub=billSub(),disc=billDisc(),tot=sub-disc;
+  var h=lines.map(function(l,i){return '<div class="ln"><div class="t">'+esc(lineLabel(l))+'</div><div class="a num">'+rs(l.amt)+'</div><button type="button" data-act="del" data-idx="'+i+'" aria-label="'+L('Remove','ہٹائیں')+'">×</button></div>';}).join('');
+  if(!h)h='<p class="hint">'+L('Nothing added yet. Tap "Add to bill" after a price.','ابھی کچھ نہیں جوڑا۔ قیمت نکال کر "بل میں جوڑیں" دبائیں۔')+'</p>';
+  if(disc>0)h+='<div class="ln"><div class="t">'+L('Discount','چھوٹ')+'</div><div class="a num">− '+rs(disc)+'</div><span></span></div>';
+  $('#lines').innerHTML=h;
+  $('#billTotal').textContent=rs(tot);
+  var msg=(shop?shop+'\n':'')+lines.map(function(l){return lineLabel(l)+' = '+rs(l.amt);}).join('\n')+(disc>0?'\n'+L('Discount','چھوٹ')+': -'+rs(disc):'')+'\n'+L('Total','ٹوٹل')+': '+rs(tot);
+  var w=$('#wa');w.href='https://wa.me/?text='+encodeURIComponent(msg);w.hidden=!lines.length;
+  save();
+}
+function buildStatic(){
+  $('#tabs').innerHTML=TABS.map(function(t){return '<button class="chip" type="button" data-act="tab" data-tab="'+t[0]+'" aria-pressed="'+(tab===t[0])+'">'+t[1][lang==='ur'?1:0]+'</button>';}).join('');
+  var ru=$('#rateUnit'),cur=ru.value||'kg';
+  ru.innerHTML=['kg','seer','pao','100g'].map(function(u){return '<option value="'+u+'">'+un(u)+'</option>';}).join('');ru.value=cur;
+  var wu=$('#wUnit'),cw=wu.value||'g';
+  wu.innerHTML=['g','kg','pao','seer','chh','tola'].map(function(u){return '<option value="'+u+'">'+un(u)+'</option>';}).join('');wu.value=cw;
+  $('#chipsW').innerHTML=WCH.map(function(c,i){return '<button class="chip" type="button" data-act="wchip" data-idx="'+i+'">'+c[lang==='ur'?2:1]+'</button>';}).join('');
+  $('#chipsQ').innerHTML=QCH.map(function(v){return '<button class="chip num" type="button" data-act="qchip" data-v="'+v+'">Rs '+v+'</button>';}).join('');
+  $('#chipsD').innerHTML=DCH.map(function(c){return '<button class="chip" type="button" data-act="dchip" data-v="'+c[0]+'">'+c[lang==='ur'?2:1]+'</button>';}).join('');
+  $('#chipsC').innerHTML=CCH.map(function(v){return '<button class="chip num" type="button" data-act="cchip" data-v="'+v+'">Rs '+v+'</button>';}).join('');
+  $('#roundChips').innerHTML=[['1','Rs 1'],['5','Rs 5'],['10','Rs 10'],['exact',L('Exact','اصل')]].map(function(r){return '<button class="chip num" type="button" data-act="round" data-v="'+r[0]+'" aria-pressed="'+(roundTo===r[0])+'">'+r[1]+'</button>';}).join('');
+  $('#seerSeg').innerHTML=[['old',L('1 seer = 933 g','1 سیر = 933 گرام')],['kilo',L('1 seer = 1 kg','1 سیر = 1 کلو')]].map(function(r){return '<button type="button" data-act="seer" data-v="'+r[0]+'" aria-pressed="'+(seerMode===r[0])+'">'+r[1]+'</button>';}).join('');
+  ['w','q','d','c'].forEach(function(k){$('#p'+k.toUpperCase()).hidden=(tab!==k);});
+  renderItems();
+}
+function setLang(l){
+  lang=l;save();
+  var app=$('#app');app.classList.toggle('ur',l==='ur');app.dir=l==='ur'?'rtl':'ltr';app.lang=l==='ur'?'ur':'en';
+  $('#bEn').setAttribute('aria-pressed',String(l==='en'));$('#bUr').setAttribute('aria-pressed',String(l==='ur'));
+  Array.prototype.forEach.call(document.querySelectorAll('[data-i]'),function(el){el.textContent=T[el.dataset.i][l==='ur'?1:0];});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ph]'),function(el){el.placeholder=T[el.dataset.ph][l==='ur'?1:0];});
+  buildStatic();update();
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');if(!b)return;
+  var a=b.dataset.act;
+  if(a==='lang')setLang(b.dataset.lang);
+  else if(a==='tab'){tab=b.dataset.tab;buildStatic();update();}
+  else if(a==='wchip'){var g=chipG(WCH[+b.dataset.idx]);$('#wUnit').value=g>=1000&&g%1000===0?'kg':'g';$('#wVal').value=g>=1000&&g%1000===0?g/1000:Math.round(g*100)/100;update();}
+  else if(a==='qchip'){$('#amt').value=b.dataset.v;update();}
+  else if(a==='dchip'){$('#dPcs').value=b.dataset.v;update();}
+  else if(a==='cchip'){$('#cGiven').value=b.dataset.v;update();}
+  else if(a==='useBill'){var t=billTotalNow();if(t>0){$('#cBill').value=Math.round(t);update();}}
+  else if(a==='round'){roundTo=b.dataset.v;save();buildStatic();update();}
+  else if(a==='seer'){seerMode=b.dataset.v;save();buildStatic();update();}
+  else if(a==='addW'){var g2=gramsNow(),r=num($('#rate').value);if(g2>0&&r>0){lines.push({name:curItem,t:'w',g:g2,rate:r,unit:$('#rateUnit').value,amt:roundP(r*g2/perG())});update();}}
+  else if(a==='addQ'){var r2=num($('#rate').value),am=num($('#amt').value);if(r2>0&&am>0){lines.push({name:curItem,t:'w',g:am/r2*perG(),rate:r2,unit:$('#rateUnit').value,amt:am});update();}}
+  else if(a==='addD'){var dr=num($('#dRate').value),pc=Math.floor(num($('#dPcs').value));if(dr>0&&pc>0){lines.push({name:curItem,t:'d',pcs:pc,rate:dr,amt:roundP(dr/12*pc)});update();}}
+  else if(a==='del'){lines.splice(+b.dataset.idx,1);update();}
+  else if(a==='manage'){manage=!manage;renderItems();}
+  else if(a==='pickItem'){
+    var it=items[+b.dataset.idx];if(!it)return;
+    curItem=it.name;
+    if(it.kind==='d'){$('#dRate').value=it.rate;}else{$('#rate').value=it.rate;if(it.unit)$('#rateUnit').value=it.unit;}
+    renderItems();update();
+  }
+  else if(a==='saveItem'){
+    var nm=$('#itemName').value.trim().slice(0,30),k=kindNow();
+    if(!nm){$('#itemName').focus();return;}
+    var rt=k==='d'?num($('#dRate').value):num($('#rate').value);
+    if(!(rt>0))return;
+    var rec={name:nm,rate:rt,kind:k,unit:k==='w'?$('#rateUnit').value:''},found=-1;
+    items.forEach(function(x,i){if(x.name.toLowerCase()===nm.toLowerCase()&&x.kind===k)found=i;});
+    if(found>=0)items[found]=rec;else items.push(rec);
+    curItem=nm;$('#itemName').value='';save();renderItems();update();
+  }
+  else if(a==='delItem'){var di=+b.dataset.idx;if(items[di]){if(items[di].name===curItem)curItem='';items.splice(di,1);save();renderItems();update();}}
+  else if(a==='clearBill'){
+    if(!lines.length)return;
+    if(!armed){armed=true;b.textContent=T.clearSure[lang==='ur'?1:0];clearTimeout(armT);armT=setTimeout(function(){armed=false;b.textContent=T.clear[lang==='ur'?1:0];},3000);return;}
+    armed=false;b.textContent=T.clear[lang==='ur'?1:0];lines=[];update();
+  }
+});
+['rate','rateUnit','wVal','wUnit','amt','dRate','dPcs','cBill','cGiven'].forEach(function(id){
+  $('#'+id).addEventListener('input',update);$('#'+id).addEventListener('change',update);
+});
+$('#disc').addEventListener('input',update);
+$('#shop').value=shop;
+$('#shop').addEventListener('input',function(){shop=this.value.trim().slice(0,40);update();});
+['rate','rateUnit','dRate'].forEach(function(id){$('#'+id).addEventListener('input',function(){if(curItem){curItem='';renderItems();update();}});});
+setLang(lang);
+})();
+</script>
+</body>
+</html>
