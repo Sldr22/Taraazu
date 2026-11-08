@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Age Calculator – Calculate Exact Age in Years, Months & Days | Taraazu</title>
+<meta name="description" content="Free online age calculator. Calculate your exact age in years, months and days, and find how many days remain until your next birthday.">
+<meta name="keywords" content="age calculator, exact age calculator, date of birth calculator, age in years months days, Taraazu">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://sldr22.github.io/Taraazu/age-calculator.html">
+<meta name="theme-color" content="#172b4d">
+<style>
+:root{color-scheme:light;--bg:#f5f7fa;--card:#fff;--ink:#172b4d;--muted:#627087;--line:#dce3ec;--accent:#16a37b;--tint:#e7f5ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:680px;margin:auto;padding:24px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:850;letter-spacing:.04em;color:var(--accent)}a{color:inherit}.back{font-weight:700;text-decoration:none}
+h1{font-size:clamp(28px,6vw,40px);line-height:1.12;margin:22px 0 8px}p{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin:18px 0;box-shadow:0 5px 18px #172b4d08}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 7px}.field{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;background:#fff;color:#172b4d}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;border-radius:12px;background:var(--accent);color:white;font-weight:800;padding:13px 18px;min-height:50px;width:100%;font:inherit;cursor:pointer;margin-top:14px}
+.result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.tile{background:var(--tint);border-radius:13px;padding:14px 8px;text-align:center}.tile strong{display:block;font-size:clamp(22px,5vw,30px);line-height:1.2}.tile span{font-size:13px;color:var(--muted)}
+.note{font-size:14px}.error{color:#b3261e;font-weight:700;min-height:24px}.seo h2{font-size:21px;margin-bottom:5px}.seo h3{font-size:17px;margin-bottom:4px}
+footer{color:var(--muted);font-size:13px;text-align:center;margin-top:28px}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.result{gap:6px}.tile{padding:12px 4px}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Taraazu Age Calculator","url":"https://sldr22.github.io/Taraazu/age-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"PKR"},"description":"Calculate exact age in years, months and days and days remaining until next birthday."}
+</script>
+</head>
+<body>
+<main>
+  <nav class="top"><a class="brand" href="./">TARAAZU</a><a class="back" href="./">← All Taraazu Tools</a></nav>
+  <header><h1>Age Calculator</h1><p>Calculate your exact age from your date of birth — in years, months and days. You can also see when your next birthday arrives.</p></header>
+  <section class="card" aria-label="Age calculator">
+    <div class="grid">
+      <div><label for="dob">Date of birth</label><input class="field" id="dob" type="date" autocomplete="bday"></div>
+      <div><label for="asof">Calculate age on</label><input class="field" id="asof" type="date"></div>
+    </div>
+    <button class="btn" id="calculate" type="button">Calculate Age</button>
+    <p class="error" id="error" role="alert"></p>
+    <div id="output" hidden aria-live="polite">
+      <div class="result">
+        <div class="tile"><strong id="years">0</strong><span>Years</span></div>
+        <div class="tile"><strong id="months">0</strong><span>Months</span></div>
+        <div class="tile"><strong id="days">0</strong><span>Days</span></div>
+      </div>
+      <div class="tile" style="margin-top:12px"><strong id="next">—</strong><span id="nextLabel">Days until your next birthday</span></div>
+      <p class="note" id="summary"></p>
+    </div>
+  </section>
+  <section class="card seo">
+    <h2>How to use the Age Calculator</h2>
+    <p>Choose your date of birth and the date you want to calculate your age on. Press “Calculate Age” to get your exact age in completed years, months and days. The calculator also shows the number of days until your next birthday.</p>
+    <h3>What does exact age mean?</h3>
+    <p>Exact age is the time elapsed between your birth date and the selected calculation date. The result accounts for different month lengths and leap years.</p>
+    <h3>Is this age calculator free?</h3>
+    <p>Yes. Taraazu’s age calculator is free to use on mobile phones, tablets and computers. Your dates are processed in your browser and are not sent to a server.</p>
+  </section>
+  <footer>© Taraazu · Free online calculators for everyday use</footer>
+</main>
+<script>
+(function(){
+  const dob=document.getElementById('dob'), asof=document.getElementById('asof');
+  const error=document.getElementById('error'), output=document.getElementById('output');
+  const pad=n=>String(n).padStart(2,'0');
+  const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const today=new Date(); asof.value=iso(today); asof.max=iso(today);
+  function dateFrom(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return null;const [y,m,d]=v.split('-').map(Number);const x=new Date(y,m-1,d);return x.getFullYear()===y&&x.getMonth()===m-1&&x.getDate()===d?x:null;}
+  function addMonthsClamped(date, count){const y=date.getFullYear(),m=date.getMonth()+count,d=date.getDate();const first=new Date(y,m,1);const last=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();return new Date(first.getFullYear(),first.getMonth(),Math.min(d,last));}
+  function diff(a,b){
+    let y=b.getFullYear()-a.getFullYear(), cursor=new Date(a);
+    if(addMonthsClamped(cursor,y*12)>b)y--;
+    cursor=addMonthsClamped(a,y*12);
+    let m=(b.getFullYear()-cursor.getFullYear())*12+b.getMonth()-cursor.getMonth();
+    if(addMonthsClamped(cursor,m)>b)m--;
+    cursor=addMonthsClamped(cursor,m);
+    const d=Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(cursor.getFullYear(),cursor.getMonth(),cursor.getDate()))/86400000);
+    return {y,m,d};
+  }
+  document.getElementById('calculate').addEventListener('click',()=>{
+    error.textContent='';output.hidden=true;
+    const birth=dateFrom(dob.value), end=dateFrom(asof.value);
+    if(!birth||!end){error.textContent='Please enter both valid dates.';return;}
+    if(birth>end){error.textContent='Date of birth cannot be after the calculation date.';return;}
+    const age=diff(birth,end);
+    document.getElementById('years').textContent=age.y;
+    document.getElementById('months').textContent=age.m;
+    document.getElementById('days').textContent=age.d;
+    let next=new Date(end.getFullYear(),birth.getMonth(),birth.getDate());
+    if(next<end)next=new Date(end.getFullYear()+1,birth.getMonth(),birth.getDate());
+    const remain=Math.round((Date.UTC(next.getFullYear(),next.getMonth(),next.getDate())-Date.UTC(end.getFullYear(),end.getMonth(),end.getDate()))/86400000);
+    document.getElementById('next').textContent=remain===0?'Today!':remain;
+    document.getElementById('nextLabel').textContent=remain===0?'Happy Birthday!':'Days until your next birthday';
+    document.getElementById('summary').textContent='Your exact age on '+end.toLocaleDateString()+ ' is '+age.y+' years, '+age.m+' months and '+age.d+' days.';
+    output.hidden=false;
+  });
+  dob.max=iso(today);
+})();
+</script>
+</body>
+</html>
